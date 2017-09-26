@@ -12,27 +12,26 @@ resource_types:
 resources:
   - name: goof
     type: git
-    source: &repo-source
-      uri: https://github.com/ah7/goof.git
+    source:
+      uri: https://github.com/ah7/goof
       branch: master
 
   - name: npm-repo-cache
     type: npm-cache
     source:
-      <<: *repo-source
+      uri: https://github.com/ah7/goof.git
+      branch: master
       paths:
         - package.json
 
-
-  # - name: resource-deploy-app
-  #   type: cf
-  #   source:
-  #     api: {{cf-api}}
-  #     username: {{cf-username}}
-  #     password: {{cf-password}}
-  #     organization: {{cf-organization}}
-  #     space: {{cf-space}}
-  #     skip_cert_check: true
+  - name: resource-deploy-app
+    type: cf
+    source:
+      api: {{cf-api}}
+      username: {{cf-username}}
+      password: {{cf-password}}
+      organization: {{cf-organization}}
+      space: {{cf-space}}
 
 jobs:
   - name: build
@@ -50,14 +49,22 @@ jobs:
         passed: [build]
       - task: test suite
         file: goof/ci/tasks/run_tests.yml
-  # - name: snyk
-  #   plan:
-  #     - get: goof
-  #       passed: [test]
-  #     - task: snyk test
-  #       file: goof/ci/tasks/snyk_test.yml
-  # - name: deploy
-  #   plan:
-  #     - get: goof
-  #       passed: [snyk]
-  #     - put: resource-deploy-app
+  - name: security
+    plan:
+      - get: goof
+        trigger: true
+        passed: [test]
+      - get: npm-repo-cache
+        passed: [build]
+      - task: snyk test
+        file: goof/ci/tasks/run_snyk.yml
+        params:
+          SNYK_TOKEN: {{snyk_token}}
+  - name: deploy
+    plan:
+      - get: goof
+        trigger: true
+        passed: [security]
+      - put: resource-deploy-app
+        params:
+          manifest: goof/manifest.yml

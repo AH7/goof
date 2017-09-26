@@ -16,8 +16,9 @@ fi
 # check for output redirect and exec snyk
 # if [ -z "$OUTPUT_FILE" ]; then
 cd $PROJECT_PATH
-snyk test --json > ../build/results.json
-ls -la
-cat ../build/results.json
-# else
-#   exec snyk "$@" > "$PROJECT_PATH/$OUTPUT_FILE"
+snyk test
+RC=$?
+if [ ! -z $FAIL_BUILD ] && [ $FAIL_BUILD == true ]; then
+  exit $RC
+fi
+exit 0

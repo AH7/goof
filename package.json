@@ -2,7 +2,7 @@
   "name": "goof",
   "version": "0.0.3",
   "description": "A vulnerable todo demo application",
-  "homepage": "https://snyk.io",
+  "homepage": "https://snyk.io/",
   "repository": {
     "type": "git",
     "url": "https://github.com/Snyk/snyk-todo-list-demo-app/"

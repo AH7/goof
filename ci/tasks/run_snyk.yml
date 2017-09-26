@@ -7,15 +7,13 @@ image_resource:
     tag: latest
 
 params:
-  SNYK_TOKEN: {{snyk_token}} 
+  SNYK_TOKEN: embedded
   PROJECT_PATH: 'goof'
-
+  FAIL_BUILD: false
 inputs:
   - name: goof
-
-outputs:
-  - name: build
-    path: build
+  - name: npm-repo-cache
+    path: /cache
 
 run:
   path: goof/ci/scripts/run_snyk.sh
