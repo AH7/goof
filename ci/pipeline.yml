@@ -1,0 +1,63 @@
+resource_types:
+  - name: snyk-test
+    type: docker-image
+    source:
+      repository: snyk/snyk-cli
+      tag: latest
+
+  - name: npm-cache
+    type: docker-image
+    source: {repository: ymedlop/npm-cache-resource, tag: latest}
+
+resources:
+  - name: goof
+    type: git
+    source: &repo-source
+      uri: https://github.com/ah7/goof.git
+      branch: master
+
+  - name: npm-repo-cache
+    type: npm-cache
+    source:
+      <<: *repo-source
+      paths:
+        - package.json
+
+
+  # - name: resource-deploy-app
+  #   type: cf
+  #   source:
+  #     api: {{cf-api}}
+  #     username: {{cf-username}}
+  #     password: {{cf-password}}
+  #     organization: {{cf-organization}}
+  #     space: {{cf-space}}
+  #     skip_cert_check: true
+
+jobs:
+  - name: build
+    plan:
+      - get: goof
+        trigger: true
+      - get: npm-repo-cache
+
+  - name: test
+    plan:
+      - get: goof
+        trigger: true
+        passed: [build]
+      - get: npm-repo-cache
+        passed: [build]
+      - task: test suite
+        file: goof/ci/tasks/run_tests.yml
+  # - name: snyk
+  #   plan:
+  #     - get: goof
+  #       passed: [test]
+  #     - task: snyk test
+  #       file: goof/ci/tasks/snyk_test.yml
+  # - name: deploy
+  #   plan:
+  #     - get: goof
+  #       passed: [snyk]
+  #     - put: resource-deploy-app

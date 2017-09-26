@@ -1,0 +1,15 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: node
+    tag: latest
+
+inputs:
+  - name: goof
+  - name: npm-repo-cache
+    path: /cache
+
+run:
+  path: goof/ci/scripts/run_tests.sh

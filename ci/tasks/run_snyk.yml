@@ -1,0 +1,21 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: snyk/snyk-cli
+    tag: latest
+
+params:
+  SNYK_TOKEN: {{snyk_token}} 
+  PROJECT_PATH: 'goof'
+
+inputs:
+  - name: goof
+
+outputs:
+  - name: build
+    path: build
+
+run:
+  path: goof/ci/scripts/run_snyk.sh
