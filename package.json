@@ -34,7 +34,8 @@
     "st": "0.2.4",
     "stream-buffers": "^3.0.1",
     "tap": "^5.7.0",
-    "xbhxbh": "1"
+    "xbhxbh": "1",
+    "electron": "1.4.0"
   },
   "devDependencies": {
     "browserify": "^13.1.1"
